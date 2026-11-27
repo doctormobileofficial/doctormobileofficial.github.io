@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0a1f44">
+<title>Doctor Mobile | OG Glass Finder</title>
+<style>
+:root{--ink:#0a1f44;--ink2:#123a7a;--paper:#f0f4fa;--card:#fff;--line:#d8e2f0;--mute:#5f6f8a;--teal:#1f5fd1;--teal-d:#123d83;--amber:#f2b134;--red:#d9534f}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:Bahnschrift,"Segoe UI",Roboto,system-ui,Arial,sans-serif;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
+input,select{-webkit-user-select:text;user-select:text}
+.wrap{max-width:900px;margin:auto;padding:0 14px}
+header{background:linear-gradient(135deg,#071634,#0f3068);color:#fff;padding:22px 0 64px;position:relative;overflow:hidden}
+header:before{content:"";position:absolute;right:-60px;top:-40px;width:260px;height:260px;background:linear-gradient(135deg,#4c8dff44,#4c8dff00 60%);transform:rotate(18deg);border:1px solid #4c8dff66;border-radius:18px}
+header:after{content:"";position:absolute;right:30px;top:20px;width:150px;height:150px;border:1px solid #ffffff22;border-radius:14px;transform:rotate(-8deg)}
+.brand{display:flex;align-items:center;gap:10px;position:relative;z-index:1}
+.logo{width:34px;height:34px;border-radius:9px;background:#fff;display:grid;place-items:center;color:var(--ink);font-weight:900}
+.brand b{font-size:15px;letter-spacing:.6px}.brand small{display:block;font-size:11px;color:#9db4d8;font-weight:400}
+h1{margin:26px 0 6px;font-size:clamp(30px,8vw,46px);line-height:1;font-weight:800;letter-spacing:-.5px;position:relative;z-index:1}
+header p{margin:0;color:#b9cbe6;font-size:14px;max-width:420px;position:relative;z-index:1}
+main{margin-top:-40px;position:relative;z-index:2;padding-bottom:30px}
+.card{background:var(--card);border-radius:18px;padding:16px;margin-bottom:14px;box-shadow:0 1px 0 #fff inset,0 10px 30px -12px #0e141840}
+.search{display:flex;align-items:center;gap:8px;background:var(--paper);border:2px solid transparent;border-radius:14px;padding:0 6px 0 14px;height:58px;transition:border-color .15s,background .15s}
+.search:focus-within{border-color:var(--teal);background:#fff}
+.search svg{flex:none;color:var(--mute)}
+.search input{flex:1;min-width:0;border:0;background:transparent;font:inherit;font-size:18px;font-weight:600;height:100%;outline:none;color:var(--ink)}
+.search input::-webkit-search-cancel-button{display:none}
+.clr{border:0;background:var(--ink);color:#fff;border-radius:10px;height:40px;padding:0 14px;font:inherit;font-weight:700;font-size:13px;cursor:pointer;visibility:hidden}
+.clr.on{visibility:visible}
+.hint{font-size:12px;color:var(--mute);margin:10px 2px 0}
+.result{display:none;margin-top:14px;border-radius:14px;background:var(--ink);color:#fff;overflow:hidden}
+.result.show{display:block;animation:pop .25s ease-out}
+@keyframes pop{from{transform:scale(.97);opacity:.4}to{transform:none;opacity:1}}
+.result .top{padding:14px 16px 4px;font-size:13px;color:#9db4d8}
+.result .model{padding:0 16px;font-size:20px;font-weight:700;line-height:1.2}
+.slot{margin:14px;padding:14px 16px;border-radius:12px;background:#fff;color:var(--ink);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.slot span{font-size:12px;font-weight:700;opacity:.75;display:block}
+.slot b{font-size:clamp(26px,8vw,36px);line-height:1;font-weight:900}
+.slot i{font-style:normal;font-size:12px;font-weight:800;letter-spacing:.5px;background:var(--teal);color:#fff;padding:8px 10px;border-radius:9px;white-space:nowrap}
+.result.multi .slot{flex-direction:column;align-items:stretch}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.chips button{border:0;background:var(--ink);color:#fff;border-radius:10px;padding:9px 12px;font:inherit;font-weight:800;font-size:14px;cursor:pointer}
+.chips button small{color:#9cc2ff;font-weight:600;margin-left:6px}
+.note-end{padding:0 16px 14px;font-size:12px;color:#9db4d8}
+.no{display:none;margin-top:14px;padding:16px;border-radius:14px;background:var(--paper);border:1px dashed #b7c6df;color:var(--ink)}.no b{display:block;font-size:16px;margin-bottom:4px}.no p{margin:0 0 12px;font-size:13px;color:var(--mute);line-height:1.5}.no button{border:0;background:var(--ink);color:#fff;border-radius:10px;padding:10px 14px;font:inherit;font-weight:700;font-size:13px;cursor:pointer}
+.no.show{display:block}
+.head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:12px}
+.head h2{margin:0;font-size:17px;font-weight:800}
+.count{font-size:12px;color:var(--mute)}
+.box-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+.box-card{border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:11px 12px;text-align:left;cursor:pointer;font:inherit;position:relative;border-left:5px solid var(--line);transition:border-color .15s,background .15s}
+.box-card b{display:block;font-size:15px}
+.box-card span{font-size:11px;color:var(--mute)}
+.box-card.active{background:#e8f0ff;border-color:var(--teal)}
+.box-card.hit{border-color:var(--amber);background:#fff8e6}
+.box-card:focus{outline:none}
+.filters{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;margin-bottom:6px;scrollbar-width:none}
+.filters::-webkit-scrollbar{display:none}
+.filter{flex:none;border:1.5px solid var(--line);background:#fff;border-radius:20px;padding:7px 13px;font:inherit;font-size:12px;font-weight:700;color:var(--mute);cursor:pointer}
+.filter.active{background:var(--ink);border-color:var(--ink);color:#fff}
+.models{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:6px}
+.model-item{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;background:var(--paper);font-size:13px;font-weight:600}
+.model-item .tag{font-size:11px;font-weight:800;color:var(--teal-d);background:#fff;border-radius:7px;padding:3px 7px;white-space:nowrap}
+.model-item.match{background:#e3edff;box-shadow:inset 3px 0 0 var(--teal)}
+.model-item.near{background:var(--paper);opacity:.75}
+details summary{list-style:none;cursor:pointer;font-weight:800;font-size:16px;display:flex;justify-content:space-between;align-items:center}
+details summary::-webkit-details-marker{display:none}
+details summary:after{content:"+";width:28px;height:28px;border-radius:8px;background:var(--ink);color:#fff;display:grid;place-items:center}
+details[open] summary:after{content:"–"}
+.addgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.field label{display:block;font-size:12px;font-weight:700;color:var(--mute);margin-bottom:5px}
+.field input,.field select{width:100%;height:46px;border:1.5px solid var(--line);border-radius:10px;padding:0 10px;font:inherit;font-size:16px;background:#fff;outline:none}
+.field input:focus,.field select:focus{border-color:var(--teal)}
+.full{grid-column:1/-1}
+.add{height:48px;border:0;border-radius:12px;background:var(--teal);color:#fff;font:inherit;font-weight:900;font-size:15px;cursor:pointer}
+.msg{font-size:12px;color:var(--mute);margin:10px 0 0;line-height:1.5}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,30px);background:var(--ink);color:#fff;padding:12px 18px;border-radius:12px;font-weight:700;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:9}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.footer{text-align:center;color:var(--mute);font-size:11px;padding:6px 0 24px}
+@media(max-width:520px){.models{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+header h1{margin:22px 0 6px;font-size:clamp(22px,6vw,30px);font-weight:700;letter-spacing:-.2px}
+.wm{display:flex;align-items:center;gap:14px;position:relative;z-index:1}
+.mark{width:58px;height:58px;flex:none}
+.w1{display:block;font-size:clamp(34px,10vw,50px);font-weight:900;letter-spacing:-1.5px;line-height:.9}
+.w2{display:block;font-size:clamp(14px,4.4vw,19px);font-weight:700;letter-spacing:10px;text-transform:uppercase;color:#7fb0ff;margin-top:6px;padding-top:6px;border-top:2px solid #4c8dff}
+.tagline{margin:14px 0 0;font-size:11px;letter-spacing:2.4px;color:#9db4d8;text-transform:uppercase;position:relative;z-index:1}
+.ghost{border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:7px 12px;font:inherit;font-weight:700;font-size:12px;color:var(--ink2);cursor:pointer}
+.ghost.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.hist{margin-top:14px}.hist[hidden]{display:none}
+.hhead{display:flex;justify-content:space-between;font-size:12px;color:var(--mute);font-weight:700;margin-bottom:8px}
+.hhead button{border:0;background:none;color:var(--teal);font:inherit;font-weight:700;cursor:pointer;padding:0}
+.hc{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}.hc::-webkit-scrollbar{display:none}
+.hb{flex:none;border:1.5px solid var(--line);background:#fff;border-radius:16px;padding:6px 11px;font:inherit;font-size:12px;font-weight:700;color:var(--ink2);cursor:pointer}
+.hb.ok:before{content:"\2713  ";color:var(--teal)}
+.hb.nf{border-color:var(--amber);background:#fff8e6;color:#7a5200}.hb.nf:before{content:"! "}
+.no .nb{display:flex;gap:8px;flex-wrap:wrap}.no .nb .alt{background:#fff;color:var(--ink);border:1.5px solid #b7c6df}
+.ctx{display:none;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px;padding:10px 12px;border-radius:12px;background:#e8f0ff;font-size:13px;font-weight:800;color:var(--ink)}
+.ctx.show{display:flex}
+.ctx button{border:0;background:var(--teal);color:#fff;border-radius:9px;padding:8px 12px;font:inherit;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap}
+.editnote{display:none;font-size:12px;color:var(--teal-d);font-weight:700;margin:0 0 10px}.editnote.show{display:block}
+.model-item.edit{cursor:pointer;box-shadow:inset 0 0 0 1.5px #b7c6df}.model-item .tag.ed{background:var(--ink);color:#fff}
+.mitem{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;background:var(--paper);margin-bottom:6px}
+.mitem label{flex:1;display:flex;align-items:center;gap:10px;font-weight:700;font-size:14px;min-width:0}
+.mitem label span{overflow-wrap:anywhere}.mitem.done label span{text-decoration:line-through;opacity:.5}
+.mitem input[type=checkbox]{width:20px;height:20px;accent-color:var(--teal);flex:none}
+.mitem select,.mform select{height:36px;border:1.5px solid var(--line);border-radius:8px;font:inherit;font-size:12px;background:#fff;color:var(--ink)}
+.mitem .x{border:0;background:#fff;border-radius:8px;width:34px;height:34px;color:#c0392b;font-weight:900;cursor:pointer;flex:none}
+.mform{display:flex;gap:6px;margin-top:12px}.mform input{flex:1;min-width:0;height:44px;border:1.5px solid var(--line);border-radius:10px;padding:0 10px;font:inherit;font-size:16px;outline:none}
+.mform select{height:44px}.mform button{border:0;background:var(--teal);color:#fff;border-radius:10px;padding:0 16px;font:inherit;font-weight:800;cursor:pointer}
+.empty{font-size:13px;color:var(--mute);padding:6px 2px}
+dialog{border:0;border-radius:18px;padding:18px;width:min(92vw,420px);box-shadow:0 20px 60px #0a1f4488;color:var(--ink)}
+dialog::backdrop{background:#0a1f4499}
+dialog h3{margin:0 0 12px;font-size:18px}.drow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dact{display:flex;gap:8px;margin-top:14px}.dact button{flex:1;height:46px;border:0;border-radius:11px;font:inherit;font-weight:800;cursor:pointer}
+.b-save{background:var(--teal);color:#fff}.b-del{background:#fdecea;color:#c0392b}.b-del.sure{background:#c0392b;color:#fff}.b-can{background:var(--paper);color:var(--ink)}
+
+header .wrap{text-align:center}
+.wm{justify-content:center}
+.wm>div{text-align:left}
+.w2{text-align:center;padding-left:10px}
+header p{margin-left:auto;margin-right:auto}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+<div class="wm"><svg class="mark" viewBox="0 0 48 48" aria-hidden="true"><rect x="11" y="3" width="26" height="42" rx="6" fill="none" stroke="#fff" stroke-width="3"/><path d="M24 14v16M16 22h16" stroke="#4c8dff" stroke-width="4.5" stroke-linecap="round"/><circle cx="24" cy="39" r="1.8" fill="#fff"/></svg>
+<div><span class="w1">Doctor</span><span class="w2">Mobile</span></div></div>
+<div class="tagline">Smart Parts &bull; Smart Service</div>
+<h1>OG Glass Finder</h1>
+<p>Search any phone model to instantly find the glass box that holds its compatible original glass.</p>
+</div></header>
+<main class="wrap">
+<section class="card">
+<div class="search"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+<input id="search" type="search" enterkeyhint="search" placeholder="Search model or code, e.g. A54, Y20s, X6895" autocomplete="off" autocapitalize="off" spellcheck="false"><button class="clr" id="clear" type="button">Clear</button></div>
+<p class="hint">Enter a full model name or model code. Tap anywhere outside the field to close the keyboard.</p>
+<div class="result" id="result"><div class="top" id="rTop"></div><div class="model" id="foundModel"></div>
+<div class="slot" id="slot"><div><span id="slotLbl">Glass box</span><b id="answerBox"></b></div><i id="slotTag">OG</i></div>
+<div class="note-end" id="rNote"></div></div>
+<div class="no" id="noResult"><b>No matching model found</b><p id="noText"></p><div class="nb"><button type="button" id="noMarket">Save to market list</button><button type="button" id="noAdd" class="alt">Add to a glass box</button></div></div>
+<div class="hist" id="histWrap" hidden><div class="hhead"><span>Recent searches</span><button id="histClear" type="button">Clear history</button></div><div class="hc" id="histList"></div></div>
+</section>
+<section class="card"><div class="head"><h2>Glass boxes</h2><div class="count" id="boxCount"></div></div><div class="box-grid" id="boxGrid"></div></section>
+<section class="card"><div class="head"><h2>Market list</h2><div class="count" id="mCount"></div></div>
+<p class="hint" style="margin:0 0 10px">Models that were not found are saved here. Check them off once you have collected the glass from the local market or Lahore.</p>
+<div class="filters" id="mTabs"></div><div id="mList"></div>
+<form id="mForm" class="mform" autocomplete="off"><input id="mInput" placeholder="Add a model to buy" required><select id="mWhere"><option>Local market</option><option>Lahore</option></select><button type="submit">Add</button></form></section>
+<section class="card"><details id="addPanel"><summary>Add a new model</summary>
+<form id="addForm" class="addgrid" autocomplete="off">
+<div class="field"><label>Glass box brand</label><select id="newBoxBrand" required></select></div>
+<div class="field"><label>Glass box name</label><input id="newBox" list="boxSuggestions" placeholder="e.g. Y20" required><datalist id="boxSuggestions"></datalist></div>
+<div class="field"><label>Phone brand</label><select id="newBrand" required></select></div>
+<div class="field"><label>Phone model</label><input id="newModel" placeholder="e.g. Y22" required></div>
+<button class="add full" type="submit">+ Add model</button></form>
+<p class="msg">Use the same box name to add a model to an existing box. Entries are saved in this browser on this device.</p></details></section>
+<section class="card"><div class="head"><h2 id="listTitle">All compatible models</h2><div style="display:flex;gap:8px;align-items:center"><span class="count" id="visibleCount"></span><button class="ghost" id="editBtn" type="button">Edit</button></div></div>
+<div class="ctx" id="ctx"><span id="ctxName"></span><button id="ctxAdd" type="button">+ Add model</button></div>
+<p class="editnote" id="editNote">Edit mode: tap any model to change or delete it.</p>
+<div class="filters" id="filters"></div><div class="models" id="models"></div></section>
+<div class="footer">DOCTOR MOBILE &bull; OG GLASS COMPATIBILITY RECORD</div>
+</main>
+<dialog id="dlg"><h3>Edit model</h3><div class="drow">
+<div class="field"><label>Glass box brand</label><select id="eBoxBrand"></select></div>
+<div class="field"><label>Glass box name</label><input id="eBox" list="boxSuggestions"></div>
+<div class="field"><label>Phone brand</label><select id="eBrand"></select></div>
+<div class="field"><label>Phone model</label><input id="eName"></div></div>
+<div class="dact"><button type="button" class="b-can" id="eCancel">Cancel</button><button type="button" class="b-del" id="eDel">Delete</button><button type="button" class="b-save" id="eSave">Save</button></div></dialog>
+<div class="toast" id="toast"></div>
+<script>
+const isField=t=>t&&t.closest&&t.closest('input,select,textarea');
+document.addEventListener('contextmenu',e=>e.preventDefault());
+['copy','cut','dragstart'].forEach(n=>document.addEventListener(n,e=>{if(!isField(e.target))e.preventDefault()}));
+document.addEventListener('selectstart',e=>{if(!isField(e.target))e.preventDefault()});
+document.addEventListener('keydown',e=>{
+  if(isField(e.target)&&!e.ctrlKey&&!e.metaKey&&e.key!=='F12')return;
+  if((e.ctrlKey||e.metaKey)&&['c','x','u','s','p'].includes(e.key.toLowerCase()))e.preventDefault();
+  if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&['i','j','c'].includes(e.key.toLowerCase())))e.preventDefault();
+});
+// Keyboard fix: tap anywhere outside a field = hide keyboard
+const KEEP='.add,.mform button,#eSave,#clear,#ctxAdd,#noMarket,#noAdd,#histList button,#histClear';
+document.addEventListener('mousedown',e=>{if(e.target.closest(KEEP))e.preventDefault()});
+document.addEventListener('pointerdown',e=>{
+  if(!isField(e.target)&&!e.target.closest('.search')&&!e.target.closest(KEEP)){const a=document.activeElement;if(a&&a!==document.body&&a.blur)a.blur();}
+});
+let touchY=0;
+document.addEventListener('touchstart',e=>{touchY=e.touches[0].clientY},{passive:true});
+document.addEventListener('touchmove',e=>{if(Math.abs(e.touches[0].clientY-touchY)>25){const a=document.activeElement;if(a&&a.id==='search')a.blur();}},{passive:true});
+
+const $=id=>document.getElementById(id);
+const norm=s=>String(s).toLowerCase().replace(/[^a-z0-9]/g,"");
+const tok=s=>String(s).toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const rx=s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+const stripBrand=(n,b)=>n.replace(new RegExp("^"+rx(b)+"\\s*","i"),"");
+
+const RAW=`Y20|Vivo|Y33;Y33s;Y33T;Y33E;Y11S;Y20s;Y20A;Y20T;Y20 2021;Y21;Y21s;Y21T 5G;Y21G;Y12A;Y12G;Y15s;Y17s;Y15A;Y52 5G;Y54s;Y74s;Y55 5G;Y55s 5G;Y55s 2023;Y56;Y75 5G;Y76 5G;Y76s;Y77;Y3s 2021;Y01
+Y20|Oppo|A11;A11x;A16;A16s;A16K;A16E;A54s;A55s 5G;A35;A38;A8;A55 5G;A56 5G;A56s 5G;A57 4G/5G;A77
+Y20|Realme|Narzo 50A;Narzo 50i;C25Y;C21Y;C31;C33;C30;C35;C50;C51
+Y20|Poco|M4 5G
+Y20|Tecno|Spark 6 Go;Spark 8;Spark 8P;Spark 8T;Spark 8C;Spark 4;Pop 7;Spark Go 2020;Spark Go 2021;Spark Go 2022;Spark Go 2023;Spark 9;Spark Neo 9i;Spark 9 Pro;Spark 10;Spark 10 5G;Spark 10C
+Y20|Infinix|Smart 5;Smart 5 Pro;Smart 6;Smart 7 India;Smart 7 HD;Smart 7 Plus;Hot 8;Hot 10i;Hot 11;Hot 12i;Hot 12 Pro;Hot 20i;Hot 20 5G;30i;Hot 30i NFC;KC8
+Y20|Motorola|E13;E22
+Y20|itel|A58;A60;A60s;A70;S18;S23;A50;A50C;A05s;A06
+Y90|Samsung|A10;A10s;M10;M01;M01s
+Y90|Vivo|Y91;Y93;Y95;Y1s;Y91i India;Y91C 2020;Y90;Y93s
+Y90|Oppo|A5s;A7;A11K;A12;A12s
+Y90|Realme|3;3i
+Redmi 13C|Samsung|A05;A05s;A06;A07;M05;M06;F05;F06
+Redmi 13C|Realme|13C;13C 5G
+Redmi 13C|Redmi|13C;13C 5G
+Redmi 13C|Poco|C65;M6 5G
+Oppo A3X|Oppo|A1;A2;A3 Pro (India);A3X (China);A3X 4G;A3X;A3 4G;A3 5G (India);A3i;A5;A5 4G;A5X;A5i;A5 Pro;A5 Pro 4G;A5i Pro;A80 5G;A98;F23;A58 4G;A20;A40;A40M;A60;A79;K1X
+Oppo A3X|Realme|C55;C63 5G;C65;C67 4G;C75;C75X;C11 5G;C12 5G;Narzo N55;Narzo N65;Narzo 60X;Narzo 70X;Narzo 80X;Narzo 80 Lite;13 5G;12X;14X;P3X;12 Lite
+Oppo A3X|Vivo|V50s 5G;V60 Pro;Y1;T3X;Y38;Y200i;Y200T;Y300T;Y28 4G;Y29;Y58 5G;Y37 Pro;Y19s;Y19s Pro;Y39;T4X
+Oppo A3X|iQOO|Z9X;Z10X
+Smart 20|Infinix|Hot 70 (X6895 / X6895B);Smart 20 (X6840 / X6840B)
+Smart 20|Tecno|Spark 50 (KN4 / KN4N);Spark 50 5G (KN8)
+Smart 20|itel|City 200 (C681L / C681LN)
+Smart 9|Tecno|Spark Go 1;Spark Go 1S;Spark Go 2;Spark Go 2025;Spark 30 5G;Spark 30C;Spark 40;Spark 40C;Pop 9;Pop 10;Pova 6 Neo 5G
+Smart 9|Infinix|Note 50X;Smart 9;Smart 10;Smart 10 Plus;Hot 50 5G;Hot 50i;Hot 60;Hot 60i 4G
+Smart 9|Motorola|One 5G Ace;Moto G 5G
+Smart 9|itel|A80
+Smart 9|Vivo|Y31;Y31 Pro;Y21D
+Hot 10|Infinix|Hot 10;Hot 12;Hot 12 Play;Hot 12 Play NFC;Hot 20 Play;Hot 20;Hot 30 Play NFC;IX683;Note 8;Note 12i
+Hot 10|Tecno|Spark 6;Camon 16;Camon 16 Pro;Pova;Pova Neo 2;Pova 4
+Hot 11s|Infinix|Hot 11S;Hot 20S;X6812;Zero 8;Zero 5G 2023;Hot 30;Hot 40;Hot 40 Pro;Hot 50 4G;Note 30;Note 30 5G;Note 40X 5G
+Hot 11s|Tecno|Spark 8 Pro;Camon 17 Pro;Camon 17P;Camon 18;Camon 18P;Camon 18T;Camon 19 Neo;Spark 10 Pro;Spark 20 Pro;Spark 30;Pova 5;Pova 5 Pro;Pova 6 Neo;Pova 7 4G;Pova 7 5G
+Vivo V23e|Vivo|V23E;V21;V21E;V20;V20 SE;V25 5G;V25E;S15E 5G;T1 44;T1 44W;T1 Pro 5G;T2;Y71T;Y73;Y100;S9E;S10E 5G
+Vivo V23e|Samsung|A22 4G;M22
+Vivo V23e|Oppo|F17;F15;A73;Reno 3
+Vivo S1|Vivo|S1;S1 Pro;Z1X;Y9S;Z5
+Vivo S1|iQOO|Neo
+Oppo A6X|Oppo|A6;A6X;A6 Pro India;A6S
+Oppo A6X|Realme|15X India;C85;Narzo 90X
+Oppo A6X|Vivo|Y31D`;
+
+const BRANDS=["Vivo","Oppo","Realme","Samsung","Redmi","Poco","Tecno","Infinix","IQOO","Motorola","Itel","Other"];
+const DEF_BB={"Y20":"Vivo","Y90":"Vivo","Redmi 13C":"Redmi","Oppo A3X":"Oppo","Smart 20":"Infinix","Smart 9":"Infinix","Hot 10":"Infinix","Hot 11s":"Infinix","Vivo V23e":"Vivo","Vivo S1":"Vivo","Oppo A6X":"Oppo"};
+const LS=(k,v)=>{try{if(v===undefined)return JSON.parse(localStorage.getItem(k));localStorage.setItem(k,JSON.stringify(v))}catch(e){}return null};
+let seq=0;const nid=p=>p+Date.now().toString(36)+(seq++);
+const cap=s=>String(s).replace(/(^|[\s(\/])([a-z])/g,(m,a,b)=>a+b.toUpperCase());
+const withBrand=(n,b)=>cap((b==="Other"||new RegExp("^"+rx(b)+"\\b","i").test(n))?n:b+" "+n);
+const restOf=r=>stripBrand(r.name,r.brand);
+const base=[];
+RAW.split("\n").forEach(l=>{const[p,b,list]=l.split("|");list.split(";").forEach(n=>base.push({id:"b"+base.length,box:p,brand:b,name:b+" "+n}))});
+let records=LS("dmRecordsV3");
+if(!Array.isArray(records)){
+  records=base.map(x=>({...x}));
+  const old=LS("doctorMobileGlassRecords");
+  if(Array.isArray(old))old.forEach(x=>{if(!(x&&x.box&&x.brand&&x.name))return;const box=x.box==="New Glass Box"?"Vivo V23e":x.box,name=withBrand(x.name,x.brand);if(!records.some(y=>y.box===box&&norm(y.name)===norm(name)))records.push({id:nid("u"),box,brand:x.brand,name})});
+  LS("dmRecordsV3",records);
+}
+const BB=Object.assign({},DEF_BB,LS("dmBoxBrand")||{});
+// One-time data patches: add new boxes for existing users without touching their edits
+const PATCHES=[{id:"smart8",box:"Smart 8",bb:"Infinix",data:`Infinix|Smart 8;Smart 8 India;Smart 8 HD;Smart 8 Pro;Smart 8 Plus;Smart 10 HD;Hot 9;Hot 40i
+Tecno|Camon 15;Camon 16S;Camon 17;Spark 5;Spark 5 Pro;Spark 7 Pro;Pop 8;Spark 20;Spark 20C;Spark Go 2024;Camon 18 Premier
+Samsung|Galaxy F52 5G
+Motorola|G04;G04s;G24;G24 Power;E14
+itel|S24;RS4;P55`}];
+(function(){
+  const done=LS("dmPatches")||[];let changed=false;
+  PATCHES.forEach(pt=>{
+    if(done.includes(pt.id))return;
+    pt.data.split("\n").forEach(l=>{const[b,list]=l.split("|");list.split(";").forEach(n=>{const name=b+" "+n;
+      if(!records.some(y=>y.box===pt.box&&norm(y.name)===norm(name)))records.push({id:nid("p"),box:pt.box,brand:b,name})})});
+    BB[pt.box]=pt.bb;done.push(pt.id);changed=true;
+  });
+  if(changed){LS("dmRecordsV3",records);LS("dmBoxBrand",BB);LS("dmPatches",done)}
+})();
+// Always start names with a capital letter (brand, model, box)
+(function(){
+  records.forEach(r=>{r.brand=cap(r.brand);r.name=cap(r.name);r.box=cap(r.box)});
+  Object.keys(BB).forEach(k=>{const v=cap(BB[k]),nk=cap(k);delete BB[k];BB[nk]=v});
+  const mk=LS("dmMarket")||[];mk.forEach(m=>{m.q=cap(m.q)});
+  LS("dmRecordsV3",records);LS("dmBoxBrand",BB);LS("dmMarket",mk);
+})();
+let hist=LS("dmHistory")||[],market=LS("dmMarket")||[];
+let query="",activeBrand="All",activeBox="All",editMode=false,mTab="All",lastFound=false,editId=null,logT=null,hitBoxes=new Set();
+const saveAll=()=>{LS("dmRecordsV3",records);LS("dmBoxBrand",BB)};
+const boxLabel=b=>{const bb=BB[b];return(!bb||bb==="Other"||norm(b).startsWith(norm(bb)))?b:bb+" "+b};
+const boxes=()=>[...new Set(records.map(x=>x.box))].sort((a,b)=>boxLabel(a).localeCompare(boxLabel(b),undefined,{numeric:true}));
+const findBox=n=>boxes().find(b=>norm(b)===norm(n)||norm(boxLabel(b))===norm(n));
+const toast=t=>{const e=$("toast");e.textContent=t;e.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove("on"),2200)};
+["newBrand","newBoxBrand","eBrand","eBoxBrand"].forEach(id=>$(id).innerHTML='<option value="">Select brand</option>'+BRANDS.map(b=>`<option>${b}</option>`).join(""));
+
+function score(r,q){
+  const nq=norm(q);if(!nq)return 1;
+  const rest=restOf(r);
+  if(norm(r.name)===nq||norm(rest)===nq)return 100;
+  const qt=tok(q),nt=tok(rest).concat(tok(r.brand)),used=new Set();let exact=true;
+  for(const t of qt){
+    let i=nt.findIndex((x,k)=>!used.has(k)&&x===t);
+    if(i<0){exact=false;i=nt.findIndex((x,k)=>!used.has(k)&&x.startsWith(t));}
+    if(i<0)return 0;used.add(i);
+  }
+  return exact?70:50;
+}
+
+function renderBoxes(){
+  const bs=boxes();
+  $("boxGrid").innerHTML=bs.map(b=>`<button class="box-card ${activeBox===b?"active":""} ${hitBoxes.has(b)?"hit":""}" data-box="${esc(b)}"><b>${esc(boxLabel(b))}</b><span>${records.filter(x=>x.box===b).length} models</span></button>`).join("");
+  $("boxGrid").querySelectorAll("button").forEach(b=>b.onclick=()=>{
+    activeBox=activeBox===b.dataset.box?"All":b.dataset.box;activeBrand="All";
+    renderBoxes();renderFilters();render();
+  });
+  $("boxCount").textContent=bs.length+" boxes \u2022 "+records.length+" models";
+  $("boxSuggestions").innerHTML=bs.map(b=>`<option value="${esc(b)}">`).join("");
+}
+function renderFilters(){
+  const src=activeBox==="All"?records:records.filter(x=>x.box===activeBox);
+  const bs=[...new Set(src.map(x=>x.brand))].sort();
+  $("filters").innerHTML=["All",...bs].map(b=>`<button class="filter ${activeBrand===b?"active":""}" data-brand="${esc(b)}">${esc(b)}</button>`).join("");
+  $("filters").querySelectorAll("button").forEach(b=>b.onclick=()=>{activeBrand=b.dataset.brand;renderFilters();render()});
+}
+function render(){
+  const boxMatch=query?findBox(query):null;
+  let hits=records.filter(x=>(activeBox==="All"||x.box===activeBox)&&(activeBrand==="All"||x.brand===activeBrand))
+    .map(x=>({x,s:boxMatch?(x.box===boxMatch?1:0):score(x,query)})).filter(h=>h.s>0);
+  const seen=new Set();hits=hits.filter(h=>{const k=h.x.box+"|"+norm(h.x.name);if(seen.has(k))return false;seen.add(k);return true});
+  hits.sort((a,b)=>b.s-a.s||a.x.name.localeCompare(b.x.name,undefined,{numeric:true}));
+  const best=hits.length?hits[0].s:0;
+  const top=query&&!boxMatch?hits.filter(h=>h.s===best):[];
+  const topBoxes=[...new Set(top.map(h=>h.x.box))];
+  hitBoxes=new Set(topBoxes);lastFound=!!hits.length;
+  $("models").innerHTML=hits.map(h=>`<div class="model-item ${query&&!boxMatch?(h.s===best?"match":"near"):(boxMatch?"match":"")} ${editMode?"edit":""}" data-id="${h.x.id}"><span class="name">${esc(h.x.name)}</span><span class="tag ${editMode?"ed":""}">${editMode?"Edit":(query?esc(boxLabel(h.x.box)):"OG")}</span></div>`).join("")||`<div class="empty">No models to show.</div>`;
+  $("visibleCount").textContent=hits.length+" results";
+  const ctx=activeBox!=="All"?activeBox:boxMatch;
+  $("listTitle").textContent=ctx?"Models in "+boxLabel(ctx)+" box":(query?"Search results":"All compatible models");
+  $("ctx").classList.toggle("show",!!ctx);
+  if(ctx){$("ctxName").textContent=boxLabel(ctx)+" box";$("ctxAdd").dataset.box=ctx}
+  $("editNote").classList.toggle("show",editMode);
+  $("editBtn").textContent=editMode?"Done":"Edit";$("editBtn").classList.toggle("on",editMode);
+  $("clear").classList.toggle("on",!!query);
+  const res=$("result");res.classList.remove("show","multi");
+  const nores=!!query&&!hits.length;
+  $("noResult").classList.toggle("show",nores);
+  if(nores)$("noText").textContent="We could not find \u201c"+query+"\u201d in the records. Check the spelling, try a shorter name or the model code, save it to your market list, or add it to a glass box.";
+  const lbl=$("slotLbl").parentNode,old=lbl.querySelector(".chips");if(old)old.remove();
+  $("slotTag").style.display="";
+  if(boxMatch){
+    res.classList.add("show");$("rTop").textContent="Glass box found";$("foundModel").textContent=boxLabel(boxMatch)+" box";
+    $("slotLbl").textContent=hits.length+" compatible models stored in";$("answerBox").textContent=boxLabel(boxMatch);$("slotTag").textContent="BOX";$("rNote").textContent="";
+  }else if(top.length&&topBoxes.length===1){
+    res.classList.add("show");$("rTop").textContent="Compatible model found";$("foundModel").textContent=top[0].x.name;
+    $("slotLbl").textContent="Use the glass stored in box";$("answerBox").textContent=boxLabel(topBoxes[0]);$("slotTag").textContent="OG";
+    $("rNote").textContent=top.length>1?top.length+" similar models found; all use this same box.":"";
+  }else if(top.length){
+    res.classList.add("show","multi");$("rTop").textContent="Multiple glass boxes match";
+    $("foundModel").textContent="Select a box or enter the exact model";
+    $("slotLbl").textContent="Check these boxes";$("answerBox").textContent="";$("rNote").textContent="";$("slotTag").style.display="none";
+    const c=document.createElement("div");c.className="chips";
+    c.innerHTML=topBoxes.map(b=>`<button data-b="${esc(b)}">${esc(boxLabel(b))}<small>${top.filter(h=>h.x.box===b).slice(0,2).map(h=>esc(h.x.name)).join(", ")}</small></button>`).join("");
+    lbl.appendChild(c);
+    c.querySelectorAll("button").forEach(b=>b.onclick=()=>{activeBox=b.dataset.b;activeBrand="All";renderBoxes();renderFilters();render();$("models").scrollIntoView({behavior:"smooth",block:"start"})});
+  }
+}
+
+// ---- Search history ----
+function logSearch(){
+  const q=query.trim();if(q.length<2)return;
+  const now=Date.now(),n=norm(q);
+  if(hist[0]&&n.startsWith(norm(hist[0].q))&&now-hist[0].t<20000)hist.shift();
+  hist=hist.filter(h=>norm(h.q)!==n);
+  hist.unshift({q,found:lastFound,t:now});hist=hist.slice(0,40);
+  LS("dmHistory",hist);renderHist();
+}
+function renderHist(){
+  $("histWrap").hidden=!hist.length;
+  $("histList").innerHTML=hist.slice(0,15).map(h=>`<button type="button" class="hb ${h.found?"ok":"nf"}" data-q="${esc(h.q)}">${esc(cap(h.q))}</button>`).join("");
+}
+$("histList").onclick=e=>{const b=e.target.closest("button");if(!b)return;$("search").value=b.dataset.q;setQuery(b.dataset.q)};
+$("histClear").onclick=()=>{hist=[];LS("dmHistory",hist);renderHist()};
+
+// ---- Market list ----
+function addMarket(q,where){
+  q=cap(q.trim());if(!q)return false;
+  if(market.some(m=>norm(m.q)===norm(q)&&m.where===(where||"Local market"))){toast("Already in your market list");return false}
+  market.unshift({id:nid("m"),q,where:where||"Local market",done:false,t:Date.now()});
+  LS("dmMarket",market);renderMarket();toast("Saved to market list");return true;
+}
+function renderMarket(){
+  const tabs=["All","Local market","Lahore"];
+  $("mTabs").innerHTML=tabs.map(t=>`<button class="filter ${mTab===t?"active":""}" data-t="${t}">${t}${t==="All"?"":" ("+market.filter(m=>m.where===t&&!m.done).length+")"}</button>`).join("");
+  const items=market.filter(m=>mTab==="All"||m.where===mTab).sort((a,b)=>a.done-b.done||b.t-a.t);
+  $("mList").innerHTML=items.map(m=>`<div class="mitem ${m.done?"done":""}" data-id="${m.id}"><label><input type="checkbox" ${m.done?"checked":""}><span>${esc(m.q)}</span></label><select>${["Local market","Lahore"].map(w=>`<option ${w===m.where?"selected":""}>${w}</option>`).join("")}</select><button class="x" type="button" aria-label="Remove">\u2715</button></div>`).join("")||`<div class="empty">Nothing to collect yet.</div>`;
+  $("mCount").textContent=market.filter(m=>!m.done).length+" to collect";
+}
+$("mTabs").onclick=e=>{const b=e.target.closest("button");if(b){mTab=b.dataset.t;renderMarket()}};
+$("mList").onchange=e=>{const row=e.target.closest(".mitem");if(!row)return;const m=market.find(x=>x.id===row.dataset.id);if(!m)return;
+  if(e.target.type==="checkbox")m.done=e.target.checked;else m.where=e.target.value;LS("dmMarket",market);renderMarket()};
+$("mList").onclick=e=>{const x=e.target.closest(".x");if(!x)return;const id=x.closest(".mitem").dataset.id;market=market.filter(m=>m.id!==id);LS("dmMarket",market);renderMarket()};
+$("mForm").onsubmit=e=>{e.preventDefault();if(addMarket($("mInput").value,$("mWhere").value))$("mInput").value=""};
+$("noMarket").onclick=()=>addMarket(query,"Local market");
+
+// ---- Add / edit / delete ----
+function openAdd(box,model){
+  const d=$("addPanel");d.open=true;
+  if(box!==undefined){$("newBox").value=box?boxLabel(box)===box||!BB[box]?box:box:"";if(box&&BB[box]){$("newBoxBrand").value=BB[box];if(!$("newBrand").value)$("newBrand").value=BB[box]}}
+  if(model!==undefined)$("newModel").value=model;
+  d.scrollIntoView({behavior:"smooth",block:"center"});
+  setTimeout(()=>$((box&&model===undefined)?"newModel":"newBox").focus(),350);
+}
+$("noAdd").onclick=()=>openAdd("",query);
+$("ctxAdd").onclick=e=>openAdd(e.currentTarget.dataset.box,"");
+$("newBox").oninput=e=>{const b=findBox(e.target.value);if(b&&BB[b])$("newBoxBrand").value=BB[b]};
+$("newBoxBrand").onchange=e=>{if(!$("newBrand").value&&e.target.value!=="Other")$("newBrand").value=e.target.value};
+$("addForm").onsubmit=e=>{
+  e.preventDefault();
+  const bn=$("newBox").value.trim(),bb=$("newBoxBrand").value,brand=$("newBrand").value,raw=$("newModel").value.trim();
+  if(!bn||!bb||!brand||!raw)return;
+  const box=findBox(bn)||cap(bn),name=withBrand(raw,brand);
+  if(records.some(x=>x.box===box&&norm(x.name)===norm(name))){toast("This model is already listed in this box");return}
+  records.push({id:nid("u"),box,brand,name});BB[box]=bb;saveAll();
+  $("newModel").value="";query="";$("search").value="";activeBox=box;activeBrand="All";
+  renderBoxes();renderFilters();render();toast(name+" added to "+boxLabel(box));
+  $("newModel").focus();
+};
+$("editBtn").onclick=()=>{editMode=!editMode;render()};
+$("models").onclick=e=>{if(!editMode)return;const it=e.target.closest(".model-item");if(it)openEdit(it.dataset.id)};
+function openEdit(id){
+  const r=records.find(x=>x.id===id);if(!r)return;editId=id;
+  $("eBox").value=r.box;$("eBoxBrand").value=BB[r.box]||"";$("eBrand").value=r.brand;$("eName").value=restOf(r);
+  const d=$("eDel");d.textContent="Delete";d.classList.remove("sure");
+  $("dlg").showModal?$("dlg").showModal():$("dlg").setAttribute("open","");
+}
+const closeDlg=()=>{$("dlg").close?$("dlg").close():$("dlg").removeAttribute("open");editId=null};
+$("eCancel").onclick=closeDlg;
+$("eDel").onclick=e=>{
+  if(!e.target.classList.contains("sure")){e.target.classList.add("sure");e.target.textContent="Tap to confirm";return}
+  records=records.filter(x=>x.id!==editId);saveAll();closeDlg();renderBoxes();renderFilters();render();toast("Model deleted");
+};
+$("eSave").onclick=()=>{
+  const r=records.find(x=>x.id===editId);if(!r)return;
+  const bn=$("eBox").value.trim(),bb=$("eBoxBrand").value,brand=$("eBrand").value,raw=$("eName").value.trim();
+  if(!bn||!bb||!brand||!raw){toast("Please fill in all fields");return}
+  const box=findBox(bn)||cap(bn),name=withBrand(raw,brand);
+  if(records.some(x=>x.id!==r.id&&x.box===box&&norm(x.name)===norm(name))){toast("This model is already listed in that box");return}
+  r.box=box;r.brand=brand;r.name=name;BB[box]=bb;saveAll();closeDlg();
+  if(activeBox!=="All"&&!records.some(x=>x.box===activeBox))activeBox="All";
+  renderBoxes();renderFilters();render();toast("Model updated");
+};
+
+// ---- Search input ----
+function setQuery(v){query=v.trim();activeBox="All";activeBrand="All";renderBoxes();renderFilters();render();clearTimeout(logT);logT=setTimeout(logSearch,1200)}
+$("search").oninput=e=>setQuery(e.target.value);
+$("search").onkeydown=e=>{if(e.key==="Enter"){clearTimeout(logT);logSearch();e.target.blur()}};
+$("search").onblur=()=>{clearTimeout(logT);logSearch()};
+$("clear").onclick=()=>{$("search").value="";query="";activeBox="All";activeBrand="All";renderBoxes();renderFilters();render()};
+renderBoxes();renderFilters();render();renderHist();renderMarket();
+</script>
+</body>
+</html>
